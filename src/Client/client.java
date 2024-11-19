@@ -1,33 +1,31 @@
-package Client;
+package client;
 
-import Order.order;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import order.Order;
 
-
-
-public class client {
+public class Client {
     private String username;
     private String password;
     private String email;
     private LocalDate birth_date;
     private int orderCount;
-    private List<order> orders;
+    private List<Order> orders;
 
-    public client() {
+    public Client() {
         this.username = "";
         this.password = "";
         this.email = "";
         this.birth_date = null;
         this.orderCount = 0;
-        this.orders = new ArrayList<order>();
+        this.orders = new ArrayList<>();
     }
 
-    public client(String username, String password, String email, LocalDate birth_date,int orderCount, List<order> orders) {
+    public Client(String username, String password, String email, LocalDate birth_date,int orderCount, List<Order> orders) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -68,7 +66,7 @@ public class client {
         this.birth_date = birth_date;
     }
 
-    public List<order> getOrderList() {
+    public List<Order> getOrderList() {
         return new ArrayList<>(orders);
     }
 
@@ -76,7 +74,7 @@ public class client {
         return this.orderCount;
     }
 
-    public void setOrderList(List<order> orders) {
+    public void setOrderList(List<Order> orders) {
         if (orders == null) {
             throw new IllegalArgumentException("Orders cannot be null");
         }
@@ -84,7 +82,7 @@ public class client {
         this.orders = new ArrayList<>(orders);
     }
     
-    public static client deserialize(DataInputStream in) {
+    public static Client deserialize(DataInputStream in) {
         try {
             String username = in.readUTF();
             String password = in.readUTF();
@@ -93,13 +91,13 @@ public class client {
             LocalDate birth_date = LocalDate.parse(birthDateString);
     
             int ordersSize = in.readInt();
-            List<order> orders = new ArrayList<>();
+            List<Order> orders = new ArrayList<>();
             for (int i = 0; i < ordersSize; i++) {
-                order o = order.deserialize(in);
+                Order o = Order.deserialize(in);
                 orders.add(o);
             }
     
-            return new client(username,password,email, birth_date, ordersSize, orders);
+            return new Client(username,password,email, birth_date, ordersSize, orders);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -110,11 +108,11 @@ public class client {
         out.writeUTF(this.getUsername());
         out.writeUTF(this.getPassword());
         out.writeUTF(this.getEmail());
-        out.writeUTF(this.getBirth_date().toString());
+        out.writeUTF(this.getBirth_date() != null ? this.getBirth_date().toString() : "");
     
-        List<order> orders = this.getOrderList();
+        List<Order> orders = this.getOrderList();
         out.writeInt(orders.size());
-        for (order o : orders) {
+        for (Order o : orders) {
             o.serialize(out);
         }
     }

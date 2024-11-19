@@ -1,1 +1,7 @@
-package Server;
+package server;
+
+public class Server{
+    public Server(){
+        
+    }
+}

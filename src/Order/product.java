@@ -1,27 +1,27 @@
-package Order;
+package order;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class product {
+public class Product {
     private static int product_id;
     private final int current_product_id;
     private String description;
 
-    public product() {
+    public Product() {
         product_id++;
         this.current_product_id = product_id;
         this.description = "";
     }
 
-    public product(String description) {
+    public Product(String description) {
         product_id++;
         this.current_product_id = product_id;
         this.description = description;
     }
 
-    public product(int id, String description){
+    public Product(int id, String description){
         this.current_product_id = id;
         this.description = description;
     }
@@ -47,7 +47,7 @@ public class product {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        product product = (product) obj;
+        Product product = (Product) obj;
         return current_product_id == product.current_product_id;
     }
 
@@ -56,10 +56,10 @@ public class product {
         out.writeUTF(this.getDescription());
     }
 
-    public static product deserialize(DataInputStream in) throws IOException{
+    public static Product deserialize(DataInputStream in) throws IOException{
         int id = in.readInt();
         String description = in.readUTF();
 
-        return new product(id,description);
+        return new Product(id,description);
     }
 }
