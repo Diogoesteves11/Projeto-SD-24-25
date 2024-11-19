@@ -34,6 +34,15 @@ public class Client {
         this.orders = new ArrayList<>();
     }
 
+    public Client(Client c) {
+        this.username = c.getUsername();
+        this.password = c.getPassword();
+        this.email = c.getEmail();
+        this.birth_date = c.getBirth_date();
+        this.orderCount = c.getOrderCount();
+        this.orders = new ArrayList<>(c.getOrderList());
+    }
+
     public String getUsername() {
         return username;
     }

@@ -7,10 +7,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Database implements Login{
     private final Map<String, Client> clientMap;
     private int totalClients;
+    ReentrantLock lock = new ReentrantLock();
 
     public Database(){
         clientMap = new HashMap<String, Client>();
@@ -24,26 +26,53 @@ public class Database implements Login{
 
     @Override
     public boolean authenticate(String username, String password) {
-        if(this.clientMap.containsKey(username)){
-            return this.clientMap.get(username).getPassword().equals(password);
+        this.lock.lock();
+        try{
+            if(this.clientMap.containsKey(username)){
+                return this.clientMap.get(username).getPassword().equals(password);
+            }
+            return false;
+        } finally {
+            this.lock.unlock();
         }
-        return false;
     }
 
     public boolean register(Client client){
-        if(client == null) return false;
-        String username = client.getUsername();
+        this.lock.lock();
+        try{
+            if(client == null) return false;
+            String username = client.getUsername();
 
-        if(!this.clientMap.containsKey(username)) {
-            this.clientMap.put(username, client);
-            this.totalClients++;
-            return true;
+            if(!this.clientMap.containsKey(username)) {
+                this.clientMap.put(username, client);
+                this.totalClients++;
+                return true;
+            }
+            return false;
+        } finally {
+            this.lock.unlock();
         }
-        return false;
     }
 
     public Client getClient(String username){
-        return this.clientMap.get(username);
+        this.lock.lock();
+        try{
+            return this.clientMap.get(username);
+        } finally {
+            this.lock.unlock();
+        }
+    }
+
+    public void updateClientData(String clientKey, Client client) {
+        this.lock.lock();
+        try {
+            if (!this.clientMap.containsKey(clientKey)) {
+                throw new IllegalArgumentException("Client key does not exist: " + clientKey);
+            }
+            this.clientMap.replace(clientKey, new Client(client));
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     public void serialize(DataOutputStream out) throws IOException {
