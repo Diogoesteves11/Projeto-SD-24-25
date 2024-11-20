@@ -1,4 +1,4 @@
-package server;
+package connectionProtocol;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
