@@ -1,6 +1,7 @@
-package utils;
+package database;
 
 import client.Client;
+import connectionProtocol.Package;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -63,8 +64,10 @@ public class Database implements Login{
         }
     }
 
-    public void updateClientData(String clientKey, Client client) {
+    public void updateClientData(Package p) {
         this.lock.lock();
+        String clientKey = p.getClientKey();
+        Client client = p.getClientData();
         try {
             if (!this.clientMap.containsKey(clientKey)) {
                 throw new IllegalArgumentException("Client key does not exist: " + clientKey);
