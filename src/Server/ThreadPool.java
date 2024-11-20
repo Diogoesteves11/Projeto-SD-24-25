@@ -1,5 +1,6 @@
 package server;
 
+import client.Client;
 import database.Database;
 import connectionProtocol.Package;
 
@@ -24,6 +25,16 @@ public class ThreadPool {
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new WorkerThread();
             threads[i].start();
+        }
+    }
+
+    public Package getProcessedPackage(String clientKey){
+        lock.lock();
+        try{
+            Client client = database.getClient(clientKey);
+            return new Package(clientKey, client);
+        } finally {
+            lock.unlock();
         }
     }
 
