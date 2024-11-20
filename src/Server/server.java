@@ -36,8 +36,13 @@ public class Server{
                 System.out.println("Novo cliente conectado: " + s.getInetAddress());
 
                 Package received = Package.convertBytesToPackage(new_connection.read());
+                String clientKey = received.getClientKey();
 
                 threadPool.submit(received);
+
+                Package processed = threadPool.getProcessedPackage(clientKey);
+
+                new_connection.send(processed.convertPackageToBytes());
             }
         } finally{
             threadPool.shutdown();
