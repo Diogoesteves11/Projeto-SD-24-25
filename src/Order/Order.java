@@ -6,18 +6,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class order {
+public class Order {
     private static int order_id = 0; 
     private final int currentOrderId; 
-    private List<product> products;
+    private List<Product> products;
 
-    public order() {
+    public Order() {
         order_id++;
         this.currentOrderId = order_id;
         this.products = new ArrayList<>();
     }
 
-    public order(int order_id, List<product> products){
+    public Order(int order_id, List<Product> products){
         this.currentOrderId = order_id;
         this.products = new ArrayList<>(products);
     }
@@ -26,15 +26,15 @@ public class order {
         return currentOrderId;
     }
 
-    public List<product> getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
 
-    public product geProduct(int id){
+    public Product geProduct(int id){
         return this.products.get(id);
     }
 
-    public void addProduct(product product) {
+    public void addProduct(Product product) {
         products.add(product);
     }
 
@@ -42,23 +42,22 @@ public class order {
         out.writeInt(this.getCurrentOrderId());
         out.writeInt(this.products.size());
     
-        for (product p : this.products) {
+        for (Product p : this.products) {
             out.writeInt(p.getCurrentProductId());
             p.serialize(out);
         }
     }
 
-    public static order deserialize(DataInputStream in) throws IOException {
+    public static Order deserialize(DataInputStream in) throws IOException {
         int orderId = in.readInt();
         int productCount = in.readInt();
         
-        List<product> products = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
         for (int i = 0; i < productCount; i++) {
-            int productId = in.readInt(); 
-            product p = product.deserialize(in); 
+            Product p = Product.deserialize(in); 
             products.add(p);
         }
         
-        return new order(orderId, products);
+        return new Order(orderId, products);
     }
 }
