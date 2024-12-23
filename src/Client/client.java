@@ -79,6 +79,17 @@ public class Client {
         return new ArrayList<>(orders);
     }
 
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Username: " + this.username + "\n");
+        sb.append("Password: " + this.password + "\n");
+        sb.append("Email: " + this.email + "\n");
+        sb.append("Birth Date: " + this.birth_date.toString() + "\n");
+        sb.append("Order Count: " + this.orderCount + "\n");
+
+        return sb.toString();
+    }
+
     public int getOrderCount(){
         return this.orderCount;
     }
