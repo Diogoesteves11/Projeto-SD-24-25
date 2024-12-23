@@ -21,10 +21,12 @@ public class ThreadPool {
     public ThreadPool(int numThreads) {
         this.database = new Database();
         threads = new WorkerThread[numThreads];
+        System.out.println("Creating " + numThreads + " threads");
 
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new WorkerThread();
             threads[i].start();
+            System.out.println("Created " + i + " thread");
         }
     }
 
@@ -33,6 +35,15 @@ public class ThreadPool {
         try{
             Client client = database.getClient(clientKey);
             return new Package(clientKey, client);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void registerClient(Client clientData){
+        lock.lock();
+        try{
+            database.register(clientData);
         } finally {
             lock.unlock();
         }
@@ -73,10 +84,10 @@ public class ThreadPool {
                     }
 
                     task = taskQueue.poll();
-
                     if (task != null) {
                         try {
                             database.updateClientData(task);
+                            System.out.println("\n-> Client " + task.getClientKey() + " updated!");
                         } catch (RuntimeException e) {
                             System.err.println("Erro ao executar tarefa: " + e.getMessage());
                         }

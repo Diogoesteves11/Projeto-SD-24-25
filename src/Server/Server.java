@@ -1,13 +1,11 @@
 package Server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import database.Database;
 import Client.Client;
 import connectionProtocol.Connection;
 import connectionProtocol.Package;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server{
     private final int maxClients;
@@ -26,7 +24,10 @@ public class Server{
     System.out.println("Server started");
     Server server = new Server(10);
     System.out.println("Servidor iniciado na porta " + PORT);
-    ThreadPool threadPool = new ThreadPool(ThreadCount);
+    System.out.println("Instantiating ThreadPool...");
+    ThreadPool threadPool = new ThreadPool(Server.ThreadCount);
+
+    System.out.println("\n------------ SERVER LOG -------------\n");
 
     try {
         while (true) {
@@ -34,16 +35,16 @@ public class Server{
             Connection new_connection = new Connection(s);
             System.out.println("Novo cliente conectado: " + s.getInetAddress());
 
-            // Leitura do pacote recebido
             byte[] receivedBytes = new_connection.read();
             Package receivedPackage = Package.convertBytesToPackage(receivedBytes);
-            
-            // Processamento e exibição dos dados do pacote
             String clientKey = receivedPackage.getClientKey();
-            Client clientData = receivedPackage.getClientData();
 
-            System.out.println("Chave do cliente: " + clientKey);
-            System.out.println("Dados do cliente:");
+            threadPool.submit(receivedPackage);
+
+            Package pkg = threadPool.getProcessedPackage(clientKey);
+            String clientKey1 = pkg.getClientKey();
+            Client clientData = pkg.getClientData();
+            System.out.println("Chave do cliente: " + clientKey1);
             System.out.println("  Username: " + clientData.getUsername());
             System.out.println("  Email: " + clientData.getEmail());
             System.out.println("  Data de nascimento: " + clientData.getBirth_date());
