@@ -1,6 +1,6 @@
 package connectionProtocol;
 
-import client.Client;
+import Client.Client;
 
 import java.io.*;
 

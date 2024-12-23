@@ -1,12 +1,15 @@
-package client;
+package Client;
 
+import java.net.Socket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import order.Order;
+import Order.Order;
+import connectionProtocol.Connection;
+import connectionProtocol.Package;
 
 public class Client {
     private String username;
@@ -31,7 +34,7 @@ public class Client {
         this.email = email;
         this.birth_date = birth_date;
         this.orderCount = orderCount;
-        this.orders = new ArrayList<>();
+        this.orders = new ArrayList<>(orders);
     }
 
     public Client(Client c) {
@@ -126,4 +129,31 @@ public class Client {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            // Configurações de conexão
+            int port = 12345;
+            Socket socket = new Socket("localhost", port);
+            Connection connection = new Connection(socket);
+    
+            // Dados do cliente
+            String clientKey = "client1";
+            Client clientData = new Client("user123", "password123", "user@example.com", 
+                                           LocalDate.of(1990, 1, 1), 0, new ArrayList<>());
+    
+            // Criação do pacote
+            Package pkg = new Package(clientKey, clientData);
+    
+            // Conversão para bytes e envio
+            byte[] data = pkg.convertPackageToBytes();
+            connection.send(data);
+            System.out.println("Pacote enviado: " + clientKey);
+    
+            connection.close();
+        } catch (Exception e) {
+            System.err.println("Erro ao conectar ao servidor: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+      
 }

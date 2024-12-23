@@ -1,6 +1,6 @@
 package database;
 
-import client.Client;
+import Client.Client;
 
 public interface Login{
     boolean authenticate(String username, String password);

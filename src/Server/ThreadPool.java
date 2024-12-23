@@ -1,6 +1,6 @@
-package server;
+package Server;
 
-import client.Client;
+import Client.Client;
 import database.Database;
 import connectionProtocol.Package;
 
