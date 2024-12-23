@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import database.Database;
 import Client.Client;
 import connectionProtocol.Connection;
 import connectionProtocol.Package;
@@ -25,10 +26,10 @@ public class Server{
     System.out.println("Server started");
     Server server = new Server(10);
     System.out.println("Servidor iniciado na porta " + PORT);
+    ThreadPool threadPool = new ThreadPool(ThreadCount);
 
     try {
         while (true) {
-            // Aceitar conexões de clientes
             Socket s = server.socket.accept();
             Connection new_connection = new Connection(s);
             System.out.println("Novo cliente conectado: " + s.getInetAddress());
@@ -36,7 +37,7 @@ public class Server{
             // Leitura do pacote recebido
             byte[] receivedBytes = new_connection.read();
             Package receivedPackage = Package.convertBytesToPackage(receivedBytes);
-
+            
             // Processamento e exibição dos dados do pacote
             String clientKey = receivedPackage.getClientKey();
             Client clientData = receivedPackage.getClientData();
@@ -50,10 +51,5 @@ public class Server{
     } catch (Exception e) {
         e.printStackTrace();
     }
-}
-
-
-
-
-
+    }
 }

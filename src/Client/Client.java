@@ -138,8 +138,7 @@ public class Client {
     
             // Dados do cliente
             String clientKey = "client1";
-            Client clientData = new Client("user123", "password123", "user@example.com", 
-                                           LocalDate.of(1990, 1, 1), 0, new ArrayList<>());
+            Client clientData = new Client("user123", "password123", "user@example.com",LocalDate.of(1990, 1, 1), 0, new ArrayList<>());
     
             // Criação do pacote
             Package pkg = new Package(clientKey, clientData);
