@@ -85,7 +85,7 @@ public class Database implements Login{
             
             if(order==null) return false;
 
-            byte[] orderData = serializeOrder(order);
+            byte[] orderData = serialize(order);
             this.ordersMap.put(username,orderData);
             return true;
         } finally {
