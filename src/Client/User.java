@@ -18,14 +18,20 @@ public class User extends Client {
         this.orders = new ArrayList<>();
     }
 
-    public User(String username, String password, String email, LocalDate birth_date, int orderCount, List<Order> orders) {
-        super(username, password, email, birth_date);
+    public User(String username, String password, String email,String name ,LocalDate birth_date, int orderCount, List<Order> orders) {
+        super(username, password,name,email, birth_date);
         this.orderCount = orderCount;
         this.orders = new ArrayList<>(orders);
     }
 
+    public User (String username, String password, String email,String name ,LocalDate birth_date){
+        super(username, password,name,email, birth_date);
+        this.orderCount = 0;
+        this.orders = new ArrayList<>();
+    }
+
     public User(User u) {
-        super(u.getUsername(), u.getPassword(), u.getEmail(), u.getBirth_date());
+        super(u.getUsername(), u.getPassword(),u.getName(),u.getEmail(), u.getBirth_date());
         this.orderCount = u.getOrderCount();
         this.orders = new ArrayList<>(u.getOrderList());
     }
@@ -71,7 +77,7 @@ public class User extends Client {
             for (int i = 0; i < orderCount; i++) {
                 orders.add(Order.deserialize(in));
             }
-            return new User(client.getUsername(), client.getPassword(), client.getEmail(), client.getBirth_date(), orderCount, orders);
+            return new User(client.getUsername(), client.getPassword(), client.getName(),client.getEmail(), client.getBirth_date(), orderCount, orders);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

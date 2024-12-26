@@ -5,29 +5,31 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import Order.Order;
-import connectionProtocol.Connection;
+
+import Mvc.ClientMvc.*;
+
+import connectionProtocol.*;
 import connectionProtocol.Package;
-import connectionProtocol.Registo;
 
 public class Client {
     private String username;
     private String password;
+    private String name;
     private String email;
     private LocalDate birth_date;
 
     public Client() {
         this.username = "";
         this.password = "";
+        this.name = "";
         this.email = "";
         this.birth_date = null;
     }
 
-    public Client(String username, String password, String email, LocalDate birth_date) {
+    public Client(String username, String password,String name ,String email, LocalDate birth_date) {
         this.username = username;
         this.password = password;
+        this.name = name;
         this.email = email;
         this.birth_date = birth_date;
     }
@@ -35,6 +37,7 @@ public class Client {
     public Client(Client c) {
         this.username = c.getUsername();
         this.password = c.getPassword();
+        this.name = c.getName();
         this.email = c.getEmail();
         this.birth_date = c.getBirth_date();
     }
@@ -45,6 +48,14 @@ public class Client {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public String getPassword() {
@@ -75,44 +86,55 @@ public class Client {
         try {
             String username = in.readUTF();
             String password = in.readUTF();
+            String name = in.readUTF();
             String email = in.readUTF();
             String birthDateString = in.readUTF();
             LocalDate birth_date = LocalDate.parse(birthDateString);
     
-            return new Client(username,password,email, birth_date);
+            return new Client(username,password,name,email, birth_date);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    public Client authenticate(String username, String password, Connection connection) throws Exception {
+        Package snd = new Login(username, password);
+        byte[] sndBytes = snd.convertPackageToBytes();
+        connection.send(sndBytes);
+
+        byte[] response = connection.read();
+        LoginResponse responsePkg = LoginResponse.convertBytesToPackage(response);
+
+        if(responsePkg.isSuccess()){
+            return responsePkg.getClient();
+        }
+        return null;
+    }
+
+    public boolean register(String username, String password, String name , String email, String birth_date , boolean b, Connection connection) throws Exception {
+        Package snd = new Registo(username, password, name,email,birth_date, b);
+        byte[] sndBytes = snd.convertPackageToBytes();
+        connection.send(sndBytes);
+
+        byte[] response = connection.read();
+        RegisterResponse responsePkg = RegisterResponse.convertBytesToPackage(response);
+        return responsePkg.isSuccess();
+    }
+
     public void serialize(DataOutputStream out) throws IOException {
         out.writeUTF(this.getUsername());
         out.writeUTF(this.getPassword());
+        out.writeUTF(this.getName());
         out.writeUTF(this.getEmail());
         out.writeUTF(this.getBirth_date() != null ? this.getBirth_date().toString() : "");
     }
 
     public static void main(String[] args) {
         try {
-            // Configurações de conexão
-            int port = 12345;
-            Socket socket = new Socket("localhost", port);
-            Connection connection = new Connection(socket);
-    
-            // Dados do cliente
-            String clientKey = "client1";
-            Client clientData = new Client("user123", "password123", "user@example.com",LocalDate.of(1990, 1, 1));
-    
-            // Criação do pacote
-            Package pkg = new Registo(clientKey, clientData);
-    
-            // Conversão para bytes e envio
-            byte[] data = pkg.convertPackageToBytes();
-            connection.send(data);
-            System.out.println("Pacote enviado: " + clientKey);
-    
-            connection.close();
+            MainController controller = new MainController();
+            controller.start();
+
         } catch (Exception e) {
             System.err.println("Erro ao conectar ao servidor: " + e.getMessage());
             e.printStackTrace();

@@ -3,6 +3,6 @@ package connectionProtocol;
 public class RequestProducts extends Package{
     RequestProducts(String clientKey)
     {
-        super(clientKey, 2);
+        super(clientKey, 3);
     }
 }

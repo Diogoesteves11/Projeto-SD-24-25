@@ -67,12 +67,12 @@ public class Database implements Login{
     public void updateClientData(Package p) {
         this.lock.lock();
         String clientKey = p.getClientKey();
-        Client client = p.getClientData();
+        //Client client = p.getClientData();
         try {
             if (!this.clientMap.containsKey(clientKey)) {
                 throw new IllegalArgumentException("Client key does not exist: " + clientKey);
             }
-            this.clientMap.replace(clientKey, new Client(client));
+            //this.clientMap.replace(clientKey, new Client(client));
         } finally {
             this.lock.unlock();
         }

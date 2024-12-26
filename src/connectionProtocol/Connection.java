@@ -21,10 +21,18 @@ public class Connection {
         this.writeLock = new ReentrantLock();
     }
 
+    public DataInputStream getInputStream() {
+        return this.input;
+    }
+
+    public DataOutputStream getOutputStream() {
+        return this.output;
+    }
+
     public void send(byte[] data){
         writeLock.lock();
         try{
-            output.writeInt(data.length); // escreve o tamanho da mensagem a enviar para facilitar receção
+            output.writeInt(data.length);
             output.write(data);
             output.flush();
         } catch (IOException e) {

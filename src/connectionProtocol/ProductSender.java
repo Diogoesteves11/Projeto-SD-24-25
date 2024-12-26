@@ -6,7 +6,7 @@ public class ProductSender extends Package{
     private List<String> produtos;
     ProductSender(String clientKey, List<String> produtos)
     {
-        super(clientKey, 3);
+        super(clientKey, 4);
         this.produtos = produtos;
     }
 }
