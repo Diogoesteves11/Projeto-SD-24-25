@@ -1,8 +1,8 @@
 package database;
 
-import client.Client;
+import Client.Client;
 
-public interface Login{
+public interface Handler{
     boolean authenticate(String username, String password);
     boolean register(Client client);
 }

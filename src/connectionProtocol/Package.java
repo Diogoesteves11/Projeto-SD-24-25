@@ -1,16 +1,21 @@
 package connectionProtocol;
 
-import client.Client;
+import Client.Client;
 
 import java.io.*;
 
 public class Package{
     private String clientKey;
     private Client clientData;
+    private int tipo;
 
-    public Package(String clientKey, Client clientData){
+    public Package(String clientKey, int tipo){
         this.clientKey = clientKey;
-        this.clientData = new Client(clientData);
+        this.tipo = tipo;
+    }
+
+    public int getTipo(){
+        return this.tipo;
     }
 
     public String getClientKey(){
@@ -41,12 +46,13 @@ public class Package{
 
     public void serialize(DataOutputStream out) throws IOException {
         out.writeUTF(this.clientKey);
+        out.writeInt(this.tipo);
         this.clientData.serialize(out);
     }
 
     public static Package deserialize(DataInputStream in) throws IOException {
         String clientKey = in.readUTF();
-        Client client = Client.deserialize(in);
-        return new Package(clientKey, client);
+        int tipo = in.readInt();
+        return new Package(clientKey,tipo);
     }
 }

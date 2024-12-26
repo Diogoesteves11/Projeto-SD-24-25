@@ -1,6 +1,6 @@
 package database;
 
-import client.Client;
+import Client.Client;
 import connectionProtocol.Package;
 
 import java.io.DataInputStream;

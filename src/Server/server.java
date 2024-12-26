@@ -1,13 +1,12 @@
-package server;
+package Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-import connectionProtocol.Connection;
 import database.Database;
+import Client.Client;
+import connectionProtocol.Connection;
 import connectionProtocol.Package;
 
 public class Server{
@@ -24,33 +23,33 @@ public class Server{
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Server started");
-        Server server = new Server(10);
-        System.out.println("Servidor iniciado na porta " + PORT);
-        ThreadPool threadPool = new ThreadPool(ThreadCount);
+    System.out.println("Server started");
+    Server server = new Server(10);
+    System.out.println("Servidor iniciado na porta " + PORT);
+    ThreadPool threadPool = new ThreadPool(ThreadCount);
 
-        try{
-            while(true){
-                Socket s = server.socket.accept();
-                Connection new_connection = new Connection(s);
-                System.out.println("Novo cliente conectado: " + s.getInetAddress());
+    try {
+        while (true) {
+            Socket s = server.socket.accept();
+            Connection new_connection = new Connection(s);
+            System.out.println("Novo cliente conectado: " + s.getInetAddress());
 
-                Package received = Package.convertBytesToPackage(new_connection.read());
-                String clientKey = received.getClientKey();
+            // Leitura do pacote recebido
+            byte[] receivedBytes = new_connection.read();
+            Package receivedPackage = Package.convertBytesToPackage(receivedBytes);
+            
+            // Processamento e exibição dos dados do pacote
+            String clientKey = receivedPackage.getClientKey();
+            Client clientData = receivedPackage.getClientData();
 
-                threadPool.submit(received);
-
-                Package processed = threadPool.getProcessedPackage(clientKey);
-
-                new_connection.send(processed.convertPackageToBytes());
-            }
-        } finally{
-            threadPool.shutdown();
+            System.out.println("Chave do cliente: " + clientKey);
+            System.out.println("Dados do cliente:");
+            System.out.println("  Username: " + clientData.getUsername());
+            System.out.println("  Email: " + clientData.getEmail());
+            System.out.println("  Data de nascimento: " + clientData.getBirth_date());
         }
-
+    } catch (Exception e) {
+        e.printStackTrace();
     }
-
-
-
-
+    }
 }
