@@ -10,8 +10,7 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private DataInputStream in;
     private DataOutputStream out;
-    
-    // Protocolo de comunicação
+
     private static final byte CMD_PUT = 1;
     private static final byte CMD_GET = 2;
     private static final byte CMD_EXIT = 3;
@@ -70,7 +69,6 @@ public class ClientHandler implements Runnable {
         System.err.println("Error handling client: " + e.getMessage());
     } finally {
         cleanup();
-        // Libera a sessão quando o cliente desconectar
         server.releaseSession();
     }
 }
@@ -123,7 +121,7 @@ public class ClientHandler implements Runnable {
         int numberOfPairs = in.readInt();
         Map<String, byte[]> pairs = new HashMap<>();
         
-        // Lê cada chave e valor do cliente
+
         for (int i = 0; i < numberOfPairs; i++) {
             String key = in.readUTF();
             int valueLength = in.readInt();
