@@ -9,7 +9,7 @@ public class Client {
     private boolean isConnected;
     private boolean isAuthenticated;
     private Scanner scanner;
-    
+
     // Protocolo de comunicação
     private static final byte CMD_PUT = 1;
     private static final byte CMD_GET = 2;
@@ -38,10 +38,9 @@ public class Client {
             while (!isAuthenticated) {
                 showAuthMenu();
             }
-            
-            // Menu de operações após login
+
             showMainMenu();
-            
+
         } catch (IOException e) {
             System.err.println("Erro: " + e.getMessage());
         } finally {
@@ -206,7 +205,7 @@ public class Client {
         System.out.print("Digite o valor condicional (em bytes): ");
         String valueCondStr = scanner.nextLine();
         byte[] valueCond = valueCondStr.getBytes();
-    
+
         byte[] result = getWhen(key, keyCond, valueCond);
         if (result != null) {
             System.out.println("Valor encontrado: " + new String(result));
@@ -214,11 +213,11 @@ public class Client {
             System.out.println("Condição não satisfeita ou valor não encontrado.");
         }
     }
-    
+
 
     private boolean register(String username, String password) throws IOException {
         if (!isConnected) throw new IOException("Not connected to server");
-        
+
         out.writeByte(CMD_REGISTER);
         out.writeUTF(username);
         out.writeUTF(password);
@@ -227,7 +226,7 @@ public class Client {
 
     private boolean login(String username, String password) throws IOException {
         if (!isConnected) throw new IOException("Not connected to server");
-        
+
         out.writeByte(CMD_LOGIN);
         out.writeUTF(username);
         out.writeUTF(password);
@@ -235,9 +234,9 @@ public class Client {
     }
 
     private void put(String key, byte[] value) throws IOException {
-        if (!isConnected || !isAuthenticated) 
+        if (!isConnected || !isAuthenticated)
             throw new IOException("Not connected or not authenticated");
-        
+
         out.writeByte(CMD_PUT);
         out.writeUTF(key);
         out.writeInt(value.length);
@@ -249,12 +248,12 @@ public class Client {
     }
 
     private byte[] get(String key) throws IOException {
-        if (!isConnected || !isAuthenticated) 
+        if (!isConnected || !isAuthenticated)
             throw new IOException("Not connected or not authenticated");
-        
+
         out.writeByte(CMD_GET);
         out.writeUTF(key);
-        
+
         if (in.readBoolean()) {
             int length = in.readInt();
             byte[] value = new byte[length];
@@ -265,7 +264,7 @@ public class Client {
     }
 
     private void multiPut(Map<String, byte[]> pairs) throws IOException {
-        if (!isConnected || !isAuthenticated) 
+        if (!isConnected || !isAuthenticated)
             throw new IOException("Not connected or not authenticated");
 
         out.writeByte(CMD_MULTIPUT);
@@ -284,7 +283,7 @@ public class Client {
     }
 
     private Map<String, byte[]> multiGet(Set<String> keys) throws IOException {
-        if (!isConnected || !isAuthenticated) 
+        if (!isConnected || !isAuthenticated)
             throw new IOException("Not connected or not authenticated");
 
         out.writeByte(CMD_MULTIGET);
@@ -307,15 +306,15 @@ public class Client {
     }
 
     private byte[] getWhen(String key, String keyCond, byte[] valueCond) throws IOException {
-        if (!isConnected || !isAuthenticated) 
+        if (!isConnected || !isAuthenticated)
             throw new IOException("Not connected or not authenticated");
-    
+
         out.writeByte(CMD_GETWHEN);
         out.writeUTF(key);
         out.writeUTF(keyCond);
         out.writeInt(valueCond.length);
         out.write(valueCond);
-    
+
         // Recebe a resposta do servidor
         boolean success = in.readBoolean();
         if (success) {
@@ -324,10 +323,10 @@ public class Client {
             in.readFully(result);
             return result;
         } else {
-            return null; 
+            return null;
         }
     }
-    
+
 
     private void logout() throws IOException {
         out.writeByte(CMD_EXIT);

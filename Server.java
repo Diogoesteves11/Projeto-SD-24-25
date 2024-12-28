@@ -76,7 +76,6 @@ public class Server {
         try {
             storage.put(key, value);
 
-            // Notifica as threads aguardando pela condição dessa chave
             Condition condition = keyConditions.get(key);
             if (condition != null) {
                 condition.signalAll();
@@ -100,12 +99,6 @@ public class Server {
         try {
             for (Map.Entry<String, byte[]> entry : pairs.entrySet()) {
                 storage.put(entry.getKey(), entry.getValue());
-
-                // Notifica as condições associadas
-                Condition condition = keyConditions.get(entry.getKey());
-                if (condition != null) {
-                    condition.signalAll();
-                }
             }
         } finally {
             storageLock.unlock();
@@ -154,7 +147,7 @@ public class Server {
         }
     }
 
-    public boolean registerUser(String username, String password) {
+        public boolean registerUser(String username, String password) {
         storageLock.lock();
         try {
             if (!users.containsKey(username)) {
@@ -177,19 +170,20 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Por favor, forneça o número máximo de sessões.");
-            return;
-        }
-
-        int maxSessions;
-        try {
-            maxSessions = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            System.out.println("O número máximo de sessões deve ser um número inteiro válido.");
-            return;
-        }
-        Server server = new Server(maxSessions);
-        server.start();
+    if (args.length < 1) {
+        System.out.println("Por favor, forneça o número máximo de sessões.");
+        return;
     }
+
+    int maxSessions;
+    try {
+        maxSessions = Integer.parseInt(args[0]);
+    } catch (NumberFormatException e) {
+        System.out.println("O número máximo de sessões deve ser um número inteiro válido.");
+        return;
+    }
+    Server server = new Server(maxSessions);
+    server.start();
+}
+
 }
